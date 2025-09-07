@@ -220,7 +220,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
   //   return;
   // }
 
-  if (s->wsQueueTop == BOGUS_OBJPTR || s->wsQueueBot == BOGUS_OBJPTR)
+  if (!wsInitialized(s))
   {
     LOG(LM_HH_COLLECTION, LL_DEBUG, "Skipping collection, deque not registered yet");
     return;

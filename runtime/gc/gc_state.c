@@ -61,6 +61,10 @@ struct FixedSizeAllocator* getUFAllocator(GC_state s) {
   return &(s->hhUnionFindAllocator);
 }
 
+bool wsInitialized(GC_state s) {
+  return (s->wsQueueTop != BOGUS_OBJPTR && s->wsQueueBot != BOGUS_OBJPTR);
+}
+
 Bool_t GC_getAmOriginal (GC_state s) {
   return (Bool_t)(s->amOriginal);
 }

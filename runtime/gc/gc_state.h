@@ -119,6 +119,8 @@ static inline void setGCStateCurrentThreadAndStack (GC_state s);
 
 static inline struct FixedSizeAllocator* getHHAllocator(GC_state s);
 
+static inline bool wsInitialized (GC_state s);
+
 
 #endif /* (defined (MLTON_GC_INTERNAL_FUNCS)) */
 

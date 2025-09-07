@@ -1178,7 +1178,7 @@ uint32_t HM_HH_desiredCollectionScope(GC_state s, GC_thread thread)
 {
   struct HM_HierarchicalHeap* hh = thread->hierarchicalHeap;
 
-  if (s->wsQueueTop == BOGUS_OBJPTR)
+  if (!wsInitialized(s))
     return thread->currentDepth+1; /* don't collect */
 
   if (thread->bytesAllocatedSinceLastCollection <
@@ -1193,7 +1193,7 @@ uint32_t HM_HH_desiredCollectionScope(GC_state s, GC_thread thread)
   size_t budget = 4 * thread->bytesAllocatedSinceLastCollection;
 
   if (budget < s->controls->hhConfig.minCollectionSize ||
-      potentialLocalScope > thread->currentDepth ||
+      potentialLocalScope > thread->currentDepth || // Scheduler not fully initialized
       potentialLocalScope > HM_HH_getDepth(hh) ||
       HM_getChunkListSize(HM_HH_getChunkList(hh)) > budget)
   {
