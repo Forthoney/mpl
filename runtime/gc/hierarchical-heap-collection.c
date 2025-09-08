@@ -232,6 +232,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
 
   if (thread->currentDepth != originalLocalScope)
   {
+    assert(thread->currentDepth == 1 && originalLocalScope == 0);
     LOG(LM_HH_COLLECTION, LL_DEBUG,
         "Skipping collection:\n"
         "  currentDepth %u\n"
@@ -242,6 +243,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
         potentialLocalScope);
     return;
   }
+  // SH_UNR: originalLocalScope = currentDepth 
 
   /** Compute the min depth for local collection. We claim as many levels
    * as we can without interfering with CC, but only so far as desired.
@@ -256,6 +258,8 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
   minOkay = max(minOkay, thread->minLocalCollectionDepth);
   minOkay = max(minOkay, minNoCC);
   uint32_t minDepth = originalLocalScope;
+  // SH_UNR: minDepth = originalLocalScope = currentDepth
+  // Do we need this loop? Can we not just sub top from bot?
   while (minDepth > minOkay && tryClaimLocalScope(s))
   {
     minDepth--;
@@ -263,8 +267,13 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
   }
   assert(minDepth == pollCurrentLocalScope(s));
 
+  // SH_UNR: minDepth' <= minDepth = originalLocalScope = currentDepth
+  assert(minDepth <= thread->currentDepth);
   if (minDepth == 0 ||
       minOkay > minDepth ||
+      /* NOTE: This last condition is unreachable because at this point,
+         minDepth <= originalLocalScope = thread->currentDepth.
+         See Notes above labeled SH_UNR */
       minDepth > thread->currentDepth)
   {
     LOG(LM_HH_COLLECTION, LL_DEBUG,

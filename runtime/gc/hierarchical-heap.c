@@ -1190,6 +1190,10 @@ uint32_t HM_HH_desiredCollectionScope(GC_state s, GC_thread thread)
   uint64_t topval = *(uint64_t*)objptrToPointer(s->wsQueueTop, NULL);
   uint32_t potentialLocalScope = UNPACK_IDX(topval);
 
+  assert(potentialLocalScope == thread->currentDepth ||
+        /* Deck.top and depth should be synced with each other except for during initialization */
+        (potentialLocalScope == 1 && thread->currentDepth == 0));
+
   size_t budget = 4 * thread->bytesAllocatedSinceLastCollection;
 
   if (budget < s->controls->hhConfig.minCollectionSize ||

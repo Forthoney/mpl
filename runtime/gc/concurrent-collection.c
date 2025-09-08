@@ -685,9 +685,10 @@ void CC_collectAtRoot(pointer threadp, pointer hhp) {
   s->currentCCTargetHH = NULL;
 }
 
-uint32_t minPrivateLevel(GC_state s) {
+uint32_t minPrivateLevel(GC_state s, uint32_t depth) {
   uint64_t topval = *(uint64_t*)objptrToPointer(s->wsQueueTop, NULL);
   uint32_t shallowestPrivateLevel = UNPACK_IDX(topval);
+  assert(shallowestPrivateLevel == depth);
   uint32_t level = (shallowestPrivateLevel>0)?(shallowestPrivateLevel-1):0;
   return level;
 }
@@ -698,7 +699,7 @@ void CC_collectAtPublicLevel(GC_state s, GC_thread thread, uint32_t depth) {
     || depth <= 0
     || depth >= thread->currentDepth
     // Don't collect heaps that are private
-    || depth > minPrivateLevel(s)
+    || depth > minPrivateLevel(s, thread->currentDepth)
     ) {
     return;
   }
