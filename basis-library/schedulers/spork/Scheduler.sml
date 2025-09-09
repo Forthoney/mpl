@@ -88,7 +88,7 @@ struct
   val traceSchedJoin = _import "GC_Trace_schedJoin" private: gcstate -> unit; o gcstate
   val traceSchedJoinFast = _import "GC_Trace_schedJoinFast" private: gcstate -> unit; o gcstate
 
-  structure Queue = DequeABP (*ArrayQueue*)
+  structure Queue = ChaseLevDeque (*ArrayQueue*)
   structure Thread = MLton.Thread.Basic
 
   val nextPromotionTokenPolicy =
@@ -484,28 +484,12 @@ struct
 
   fun communicate () = ()
 
-  fun queueSize () =
-    let
-      val myId = myWorkerId ()
-      val {queue, ...} = vectorSub (workerLocalData, myId)
-    in
-      Queue.size queue
-    end
-
   fun push x =
     let
       val myId = myWorkerId ()
       val {queue, ...} = vectorSub (workerLocalData, myId)
     in
       Queue.pushBot queue x
-    end
-
-  fun clear () =
-    let
-      val myId = myWorkerId ()
-      val {queue, ...} = vectorSub (workerLocalData, myId)
-    in
-      Queue.clear queue
     end
 
   fun pop () =

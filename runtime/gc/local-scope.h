@@ -20,9 +20,9 @@
 #if (defined (MLTON_GC_INTERNAL_FUNCS))
 
 bool tryClaimLocalScope(GC_state s);
-void releaseLocalScope(GC_state s, uint32_t oldbot);
+void releaseLocalScope(GC_state s, uint64_t oldbot);
 
-uint32_t pollCurrentLocalScope(GC_state s);
+uint64_t pollCurrentLocalScope(GC_state s);
 
 #endif /* defined (MLTON_GC_INTERNAL_FUNCS) */
 

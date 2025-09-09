@@ -22,7 +22,7 @@ local
     "allowFFI true"
     "allowPrim true"
   in
-    DequeABP.sml
+    ChaseLevDeque.sml
   end
   Result.sml
   

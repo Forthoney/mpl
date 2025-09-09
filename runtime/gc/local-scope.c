@@ -5,7 +5,7 @@
  */
 
 bool tryClaimLocalScope(GC_state s) {
-  objptr result = ABP_deque_try_pop_bot(
+  objptr result = ChaseLev_tryPopBot(
     s,
     s->wsQueueTop,
     s->wsQueueBot,
@@ -15,12 +15,12 @@ bool tryClaimLocalScope(GC_state s) {
   return (result != BOGUS_OBJPTR);
 }
 
-void releaseLocalScope(GC_state s, uint32_t originalBot) {
-  uint32_t *bot = (uint32_t*)objptrToPointer(s->wsQueueBot, NULL);
+void releaseLocalScope(GC_state s, uint64_t originalBot) {
+  uint64_t *bot = (uint64_t*)objptrToPointer(s->wsQueueBot, NULL);
   __atomic_store_n(bot, originalBot, __ATOMIC_SEQ_CST);
 }
 
-uint32_t pollCurrentLocalScope(GC_state s) {
-  uint32_t *bot = (uint32_t*)objptrToPointer(s->wsQueueBot, NULL);
+uint64_t pollCurrentLocalScope(GC_state s) {
+  uint64_t *bot = (uint64_t*)objptrToPointer(s->wsQueueBot, NULL);
   return __atomic_load_n(bot, __ATOMIC_SEQ_CST);
 }

@@ -226,9 +226,12 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
     return;
   }
 
-  uint64_t topval = *(uint64_t *)objptrToPointer(s->wsQueueTop, NULL);
-  uint32_t potentialLocalScope = UNPACK_IDX(topval);
-  uint32_t originalLocalScope = pollCurrentLocalScope(s);
+  uint64_t potentialLocalScope1 = *(uint64_t *)objptrToPointer(s->wsQueueTop, NULL);
+  uint64_t rawLocalScope = pollCurrentLocalScope(s);
+
+  // NOTE: These should be macros
+  uint32_t potentialLocalScope = potentialLocalScope1 % 64;
+  uint32_t originalLocalScope = rawLocalScope % 64;
 
   if (thread->currentDepth != originalLocalScope)
   {
@@ -289,7 +292,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
         desiredScope,
         potentialLocalScope);
 
-    releaseLocalScope(s, originalLocalScope);
+    releaseLocalScope(s, rawLocalScope);
     return;
   }
 
@@ -343,7 +346,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
       "  min without CC is         %u\n"
       "  min okay is               %u\n"
       "  desired min is            %u\n"
-      "  potential local scope is  %u -> %u\n"
+      "  potential local scope is  %u -> %" PRIu64 "\n"
       "  collection scope is       %u -> %u\n",
       // "  lchs %"PRIu64" lcs %"PRIu64,
       ((void *)(hh)),
@@ -1035,7 +1038,7 @@ void HM_HHC_collectLocal(uint32_t desiredScope)
   LOG(LM_HH_COLLECTION, LL_DEBUG,
       "END");
 
-  releaseLocalScope(s, originalLocalScope);
+  releaseLocalScope(s, rawLocalScope);
   return;
 }
 

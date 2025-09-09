@@ -1187,8 +1187,8 @@ uint32_t HM_HH_desiredCollectionScope(GC_state s, GC_thread thread)
     return thread->currentDepth+1; /* don't collect */
   }
 
-  uint64_t topval = *(uint64_t*)objptrToPointer(s->wsQueueTop, NULL);
-  uint32_t potentialLocalScope = UNPACK_IDX(topval);
+  uint64_t potentialLocalScope1 = *(uint64_t*)objptrToPointer(s->wsQueueTop, NULL);
+  uint32_t potentialLocalScope = potentialLocalScope1 % 64;
 
   assert(potentialLocalScope == thread->currentDepth ||
         /* Deck.top and depth should be synced with each other except for during initialization */

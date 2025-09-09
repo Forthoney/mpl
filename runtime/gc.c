@@ -46,7 +46,7 @@ extern C_Pthread_Key_t gcstate_key;
 
 #include "gc/gdtoa-multiple-threads-defs.c"
 
-#include "gc/abp-deque.c"
+#include "gc/chase-lev-deque.c"
 #include "gc/assign.c"
 #include "gc/atomic.c"
 #include "gc/block-allocator.c"
